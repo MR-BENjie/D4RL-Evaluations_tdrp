@@ -94,25 +94,27 @@ def experiment(variant):
         hidden_sizes = [M, M,]
     )
 
-    if variant['auxiliary_reward']:
+    if variant['use_auxiliary']:
         map_location = torch.device(ptu.device)
         tdrp_param = torch.load(os.path.join(variant["tdrp_pkl"],"params.pkl"),map_location=map_location)
         tdrp = tdrp_param["trainer/tdrp"]
 
     eval_path_collector = CustomMDPPathCollector(
         eval_env,
-        auxiliary_reward=variant['auxiliary_reward'],
+        auxiliary_reward=variant['use_auxiliary'],
         tdrp=tdrp,
         log_dir=variant["tdrp_pkl"],
         sigma=variant["sigma"],
+        obs_noise = variant["obs_noise"],
     )
     expl_path_collector = MdpPathCollector(
         expl_env,
         policy,
-        auxiliary_reward=variant['auxiliary_reward'],
+        auxiliary_reward=variant['use_auxiliary'],
         tdrp=tdrp,
         log_dir=variant["tdrp_pkl"],
         sigma=variant["sigma"],
+        obs_noise=variant["obs_noise"]
     )
     buffer_filename = None
     if variant['buffer_filename'] is not None:
@@ -122,7 +124,7 @@ def experiment(variant):
         variant['replay_buffer_size'],
         expl_env,
     )
-    load_hdf5(eval_env.unwrapped.get_dataset(), replay_buffer, max_size=variant['replay_buffer_size'])
+    load_hdf5(eval_env.get_dataset(), replay_buffer, max_size=variant['replay_buffer_size'])
     
     trainer = BEARTrainer(
         env=eval_env,
@@ -132,7 +134,7 @@ def experiment(variant):
         target_qf1=target_qf1,
         target_qf2=target_qf2,
         vae=vae_policy,
-        tdrp = tdrp
+        tdrp = tdrp,
         **variant['trainer_kwargs']
     )
     algorithm = TorchBatchRLAlgorithm(
@@ -166,6 +168,8 @@ if __name__ == "__main__":
     parser.add_argument('--tdrp_pkl', default="", type=str)
     parser.add_argument('--sigma', default=1.0, type=float)
 
+    parser.add_argument('--obs_noise', default=0.0, type=float)
+
     args = parser.parse_args()
 
     variant = dict(
@@ -179,6 +183,8 @@ if __name__ == "__main__":
         use_auxiliary = args.use_auxiliary,
         train_tdrp=args.train_tdrp,
         tdrp_pkl=args.tdrp_pkl,
+        sigma=args.sigma,
+        obs_noise=args.obs_noise,
         algorithm_kwargs=dict(
             num_epochs=3000,
             num_eval_steps_per_epoch=5000,

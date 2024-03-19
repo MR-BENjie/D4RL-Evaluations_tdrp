@@ -1,6 +1,7 @@
 import numpy as np
-
-
+import torch
+import random
+import rlkit.torch.pytorch_util as ptu
 def multitask_rollout(
         env,
         agent,
@@ -113,6 +114,7 @@ def rollout(
         goal_set=None,
         tdrp=None,
         sigma=1,
+        obs_noise=0.0,
 ):
     """
     The following value for the following keys will be a 2D array, with the
@@ -147,7 +149,7 @@ def rollout(
         next_o, r, d, env_info = env.step(a)
 
         if auxiliary_reward:
-            r = cal_auxiliary_reward(tdrp, goal_set, o, r, sigma)
+            r = cal_auxiliary_reward(tdrp, goal_set, o+torch.ones_like(o)*random.random()*obs_noise, r, sigma)
 
         observations.append(o)
         rewards.append(r)
@@ -196,6 +198,7 @@ def function_rollout(
         goal_set=None,
         tdrp=None,
         sigma=1,
+        obs_noise=0.0,
 ):
     """
     The following value for the following keys will be a 2D array, with the
@@ -228,7 +231,7 @@ def function_rollout(
         next_o, r, d, env_info = env.step(a)
 
         if auxiliary_reward:
-            r = cal_auxiliary_reward(tdrp, goal_set, o, r, sigma)
+            r = cal_auxiliary_reward(tdrp, goal_set, o+torch.ones_like(o)*random.random()*obs_noise, r, sigma)
 
         observations.append(o)
         rewards.append(r)

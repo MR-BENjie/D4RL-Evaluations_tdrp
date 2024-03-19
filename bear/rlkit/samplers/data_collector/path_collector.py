@@ -21,6 +21,7 @@ class MdpPathCollector(PathCollector):
             tdrp=None,
             log_dir="../log/runs",
             sigma=1,
+            obs_noise=0.0,
     ):
         if render_kwargs is None:
             render_kwargs = {}
@@ -39,6 +40,8 @@ class MdpPathCollector(PathCollector):
         self.tdrp = tdrp
         self.log_dir = log_dir
         self.sigma = sigma
+        self.obs_noise = obs_noise
+        self.goal_centers = None
 
         if self.auxiliary_reward:
             paths_final = torch.load(os.path.join(self.log_dir,"path.pkl"))
@@ -78,6 +81,7 @@ class MdpPathCollector(PathCollector):
                 goal_set=self.goal_centers,
                 tdrp=self.tdrp,
                 sigma=self.sigma,
+                obs_noise=self.obs_noise,
             )
             path_len = len(path['actions'])
             if (
@@ -140,6 +144,7 @@ class CustomMDPPathCollector(PathCollector):
         tdrp=None,
         log_dir="../log/runs",
         sigma=1,
+        obs_noise=0.0
     ):
         if render_kwargs is None:
             render_kwargs = {}
@@ -156,6 +161,8 @@ class CustomMDPPathCollector(PathCollector):
         self.tdrp = tdrp
         self.log_dir = log_dir
         self.sigma = sigma
+        self.obs_noise = obs_noise
+        self.goal_centers = None
 
         if self.auxiliary_reward:
             paths_final = torch.load(os.path.join(self.log_dir,"path.pkl"))
@@ -185,6 +192,11 @@ class CustomMDPPathCollector(PathCollector):
                 self._env,
                 policy_fn,
                 max_path_length=max_path_length_this_loop,
+                auxiliary_reward=self.auxiliary_reward,
+                goal_set=self.goal_centers,
+                tdrp=self.tdrp,
+                sigma=self.sigma,
+                obs_noise=self.obs_noise,
             )
             path_len = len(path['actions'])
             if (
