@@ -167,6 +167,7 @@ if __name__ == "__main__":
     parser.add_argument('--use_auxiliary', default=False, type=bool)
     parser.add_argument('--tdrp_pkl', default="", type=str)
     parser.add_argument('--sigma', default=1.0, type=float)
+    parser.add_argument("--tdrp_step", default=30, type=int)
 
     parser.add_argument('--obs_noise', default=0.0, type=float)
 
@@ -211,6 +212,7 @@ if __name__ == "__main__":
             mmd_sigma=args.mmd_sigma,
             target_mmd_thresh=args.target_mmd_thresh,
             train_tdrp = args.train_tdrp,
+            tdrp_step=args. tdrp_step,
 
         ),
     )

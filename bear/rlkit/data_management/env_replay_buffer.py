@@ -19,6 +19,7 @@ class EnvReplayBuffer(SimpleReplayBuffer):
         self.env = env
         self._ob_space = env.observation_space
         self._action_space = env.action_space
+        self._tdrp_index = 0
 
         if env_info_sizes is None:
             if hasattr(env, 'info_sizes'):
@@ -48,3 +49,20 @@ class EnvReplayBuffer(SimpleReplayBuffer):
             terminal=terminal,
             **kwargs
         )
+    def horizon_bath(self, horizon_length):
+        max_index = min(self._size, self._tdrp_index+horizon_length)
+        if max_index-self._tdrp_index < horizon_length/3:
+            self._tdrp_index=0
+            return None
+        batch = dict(
+            observations=self._observations[self._tdrp_index:max_index],
+            actions=self._actions[self._tdrp_index:max_index],
+            rewards=self._rewards[self._tdrp_index:max_index],
+            terminals=self._terminals[self._tdrp_index:max_index],
+            next_observations=self._next_obs[self._tdrp_index:max_index],
+        )
+        if max_index== self._size:
+            self._tdrp_index = 0
+        else:
+            self._tdrp_index=max_index
+        return batch

@@ -44,6 +44,7 @@ class BEARTrainer(TorchTrainer):
         use_target_nets=True,
 
         train_tdrp=False,
+        tdrp_step=30,
     ):
         super().__init__()
         self.env = env
@@ -61,6 +62,8 @@ class BEARTrainer(TorchTrainer):
 
         self.tdrp = tdrp
         self.train_tdrp = train_tdrp
+        self.tdrp_step = tdrp_step
+        self.pdist = torch.nn.PairwiseDistance(p=2)
 
         self.qf_criterion = nn.MSELoss()
         self.vf_criterion = nn.MSELoss()
