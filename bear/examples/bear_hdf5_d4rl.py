@@ -171,6 +171,7 @@ if __name__ == "__main__":
 
     parser.add_argument('--obs_noise', default=0.0, type=float)
 
+    parser.add_argument("--snapshot_mode", default="last", type=str)
     args = parser.parse_args()
 
     variant = dict(
@@ -217,6 +218,6 @@ if __name__ == "__main__":
         ),
     )
     rand = np.random.randint(0, 100000)
-    setup_logger(os.path.join('BEAR_launch', str(rand)), variant=variant, base_log_dir='./data')
-    ptu.set_gpu_mode(True)  # optionally set the GPU (default=False)
+    setup_logger(os.path.join('BEAR_launch', str(rand)), variant=variant, base_log_dir='./data',snapshot_mode=args.snapshot_mode)
+    ptu.set_gpu_mode(True, gpu_id=args.gpu)  # optionally set the GPU (default=False)
     experiment(variant)
