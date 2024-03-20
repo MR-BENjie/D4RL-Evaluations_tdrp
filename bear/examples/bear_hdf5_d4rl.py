@@ -169,7 +169,7 @@ if __name__ == "__main__":
     parser.add_argument('--sigma', default=1.0, type=float)
     parser.add_argument("--tdrp_step", default=30, type=int)
 
-    parser.add_argument('--obs_noise', default=0.0, type=float)
+    parser.add_argument('--obs_noise', default=0, type=float)
 
     parser.add_argument("--snapshot_mode", default="last", type=str)
     args = parser.parse_args()

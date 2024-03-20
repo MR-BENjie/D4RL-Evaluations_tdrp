@@ -97,8 +97,8 @@ def cal_auxiliary_reward(tdrp, goal_set, obs , reward, sigma):
             min_distance = distance
     min_distance = min_distance.cpu().detach().numpy()
     min_distance = min_distance*sigma
-    print(reward,end="     ")
-    print(min_distance)
+    #print(reward,end="     ")
+    #print(min_distance)
 
     return reward-min_distance
 
@@ -231,7 +231,7 @@ def function_rollout(
         next_o, r, d, env_info = env.step(a)
 
         if auxiliary_reward:
-            r = cal_auxiliary_reward(tdrp, goal_set, o+torch.ones_like(o)*random.random()*obs_noise, r, sigma)
+            r = cal_auxiliary_reward(tdrp, goal_set, o+np.ones_like(o)*random.random()*obs_noise, r, sigma)
 
         observations.append(o)
         rewards.append(r)
