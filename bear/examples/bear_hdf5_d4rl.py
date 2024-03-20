@@ -188,7 +188,7 @@ if __name__ == "__main__":
         sigma=args.sigma,
         obs_noise=args.obs_noise,
         algorithm_kwargs=dict(
-            num_epochs=3000,
+            num_epochs=1200,
             num_eval_steps_per_epoch=5000,
             num_trains_per_train_loop=1000,
             num_expl_steps_per_train_loop=1000,
